@@ -1,0 +1,13 @@
+# AGGREGATE FUNCTIONS
+
+SELECT COUNT(patientId) AS NumberOfPatiens FROM PATIENT; #No of Patients
+
+SELECT MAX(PLevel) AS MaxProgressLevel FROM PATIENT;
+
+SELECT MIN(PLevel) AS MinProgressLevel FROM PATIENT;
+
+SELECT STD(age) AS Standard_deviation_age FROM PATIENT;
+
+SELECT VARIANCE(age) AS Variance_age FROM PATIENT;
+
+SELECT SUM(age)/COUNT(age) AS Avg_age FROM PATIENT;

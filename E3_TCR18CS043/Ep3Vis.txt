@@ -1,0 +1,158 @@
+#------Operation on wards------
+
+INSERT INTO WARD (wId, DStage) VALUES 
+(1,1),
+(2,2)
+;
+
+SELECT * FROM WARD;
+
+
+
+
+#------Operation on Patient------
+
+set foreign_key_checks=0;
+ALTER TABLE PATIENT 
+ MODIFY COLUMN patientId INT NOT NULL AUTO_INCREMENT;
+set foreign_key_checks=1;
+
+ALTER TABLE PATIENT AUTO_INCREMENT = 0;
+
+INSERT INTO PATIENT (Fname, Mname, Lname, age,StreetAdd , District, PIN, sex, PLevel, wId) VALUES 
+('Tom', 'B', 'Rage', 35, 'Skagen 21', 'Stavanger', 4006, 'M', 2, 1),
+('Ram', 'B', 'Rage', 36, 'Skagen 21', 'Stavanger', 4006, 'M', 2, 1),
+('Mer', 'N', 'Rage', 35, 'Skagen 21', 'Stavanger', 4006, 'M', 2, 1);
+
+SELECT P.Fname,P.Mname,P.Lname,W.DStage FROM PATIENT AS P, WARD AS W WHERE P.wId = W.wId ;   ### Command to display disease stage of Patient 
+
+#+------+-------+-------+-------+------+----------------+-----------+
+#| Dno  | Fname | Mname | Lname | age  | Experience     | Dname     |
+#+------+-------+-------+-------+------+----------------+-----------+
+#|    1 | Mark  | B     | Range |   35 | Surgery        | Neurology |
+#|    1 | Dark  | B     | Range |   36 | Neuroanatomist | Neurology |
+#|    1 | Clark | N     | Rager |   35 | Nephrologist   | Neurology |
+#+------+-------+-------+-------+------+----------------+-----------+
+
+
+DELETE FROM PATIENT WHERE Fname = 'Tom';
+
+SELECT * FROM PATIENT;
+
+
+
+
+#------Operation on Department------
+
+set foreign_key_checks=0;
+INSERT INTO DEPARTMENT(Dno, Dname, doctorId) VALUES 
+(1, 'Neurology', 1),
+(2, 'Nephrology', 3);
+set foreign_key_checks=1;
+
+SELECT * FROM DEPARTMENT;
+
+
+
+
+#------Operation on Doctor------
+
+set foreign_key_checks=0;
+ALTER TABLE DOCTOR 
+ MODIFY COLUMN doctorId INT NOT NULL AUTO_INCREMENT;
+set foreign_key_checks=1;
+
+ALTER TABLE DOCTOR AUTO_INCREMENT = 0;
+
+set foreign_key_checks=0;
+INSERT INTO DOCTOR(Fname, Mname, Lname, age, Experience, Dname, superviseId, sex) VALUES 
+('Mark', 'B', 'Range', 35, 'Surgery', 'Neurology', 1, 'M'),
+('Dark', 'B', 'Range', 36, 'Neuroanatomist', 'Neurology', 2, 'M'),
+('Clark', 'N', 'Rager', 35, 'Nephrologist', 'Nephrology', 1, 'M');
+set foreign_key_checks=1;
+
+SELECT De.Dno, Fname, Mname, Lname, age, Experience, De.Dname FROM DOCTOR AS D, DEPARTMENT AS De WHERE De.Dno = 1 AND De.Dname = D.Dname ;  
+### Command to display Doctors who work in Dno 1
+#+------+-------+-------+-------+------+----------------+-----------+
+#| Dno  | Fname | Mname | Lname | age  | Experience     | Dname     |
+#+------+-------+-------+-------+------+----------------+-----------+
+#|    1 | Mark  | B     | Range |   35 | Surgery        | Neurology |
+#|    1 | Dark  | B     | Range |   36 | Neuroanatomist | Neurology |
+#+------+-------+-------+-------+------+----------------+-----------+
+
+UPDATE DOCTOR SET Lname = 'Don', Mname = 'Stein'  
+ WHERE Fname = Dark;                                #updating names
+
+SELECT * FROM DOCTOR;
+
+#------Operation on Department location-------
+
+INSERT INTO DEP_LOCATION(Dname,Location) VALUES
+('Neurology','Block 1'),
+('Nephrology','Block 2');
+
+SELECT * FROM DEP_LOCATION;
+
+
+
+
+#------Operation on Guardians------
+
+INSERT INTO GUARDIANS ( patientId , name , age , relationship , sex ) VALUES
+(2,'Alex',23,'cousin','M' ),
+(3,'Clara',23,'cousin','F' )
+;
+
+SELECT * FROM GUARDIANS;
+
+
+
+
+#------Operations on Medicines------
+
+set foreign_key_checks=0;
+ALTER TABLE MEDICINES 
+ MODIFY COLUMN medId INT NOT NULL AUTO_INCREMENT;
+set foreign_key_checks=1;
+
+ALTER TABLE MEDICINES
+ ADD name VARCHAR(100) AFTER medId;
+
+ALTER TABLE MEDICINES AUTO_INCREMENT = 0;
+
+INSERT INTO MEDICINES ( name, quantity , description ) VALUES
+('adrenalin ','2 per day',' increase response'),
+('hydrochlorine ','3 per day',' increase immunity');
+
+SELECT * FROM MEDICINES;
+
+
+
+
+#------Operations on works on------
+
+INSERT INTO WORKS_ON (doctorId , wId ) VALUES
+(1,2),
+(2,2),
+(3,1);
+
+SELECT D.Fname, D.Dname FROM WORKS_ON AS W, DOCTOR AS D WHERE W.wId = 2 AND D.doctorId = W.doctorId; 
+### Selecting Doctors who works on ward 2
+#+-------+-----------+
+#| Fname | Dname     |
+#+-------+-----------+
+#| Mark  | Neurology |
+#| Dark  | Neurology |
+#+-------+-----------+
+
+
+
+
+#------Operations on CONSUMPTIONS------
+
+INSERT INTO CONSUMPTIONS (medId , wId ) VALUES
+(1,1),
+(2,2);
+SELECT * FROM CONSUMPTIONS;
+
+SELECT * FROM CONSUMPTIONS WHERE wID = 2;   

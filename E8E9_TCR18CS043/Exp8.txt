@@ -1,0 +1,42 @@
+## STRING FUNCTIONS
+
+CREATE VIEW PATIENT_NAMES AS
+ SELECT CONCAT(Fname, " ", Mname, " ", Lname) AS Name FROM PATIENT; ##concat function
+
+SELECT Name FROM PATIENT_NAMES;
+
+SELECT LOWER(NAME) FROM PATIENT_NAMES;# lower function
+
+SELECT UPPER(NAME) FROM PATIENT_NAMES;# upper function
+
+SELECT REPLACE(NAME, "Mer", "Rahul") AS Replaced_names FROM PATIENT_NAMES;# Replace function
+
+
+## NUMERIC FUNCTIONS
+
+SELECT AVG(PLevel) AS AverageProgressLevel FROM PATIENT; #avg function
+
+SELECT COUNT(patientId) AS NumberOfPatiens FROM PATIENT; #No of Patients
+
+SELECT MAX(PLevel) AS MaxProgressLevel FROM PATIENT;
+
+SELECT MIN(PLevel) AS MinProgressLevel FROM PATIENT;
+
+## Date functions
+
+SELECT CURRENT_DATE();
+
+ALTER TABLE PATIENT
+ ADD AdmitDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+ ADD DischargeDate DATETIME;
+
+SELECT DATE(AdmitDate) AS AdmissionDate, MONTHNAME(DATE(AdmitDate)) AS AdmitMonth, YEAR(DATE(AdmitDate)) AS AdmitYear FROM PATIENT;
+
+## Advanced operation (not related to App)
+
+SELECT SESSION_USER(),USER(),DATABASE();
+
+SELECT BIN(15);
+
+SELECT IF(500<1000, "YES", "NO");
+

@@ -1,0 +1,65 @@
+#------Inserting values------
+
+INSERT INTO PATIENT (Fname, Mname, Lname, age,StreetAdd , District, PIN, sex, PLevel, wId) VALUES 
+('Jack', 'B', 'MA', 23, 'Skagen 21', 'Stavanger', 4006, 'M', 4, 1),
+('King', 'Jong', 'Um', 46, 'Skagen 21', 'Lokador', 4006, 'M', 4, 1),
+('LUX', 'DE', 'Rogue', 28, 'Skagen 21', 'Dorador', 4006, 'F', 3, 1),
+('Sonia', 'Mania', 'Pierre', 28, 'Skagen 21', 'Namkoor', 4006, 'F', 3, 1),
+('San','T','Ram',31,'Skagen 21', 'Sodvia', 4006, 'M', 3, 1);
+
+set foreign_key_checks=0;
+INSERT INTO DOCTOR(Fname, Mname, Lname, age, Experience, Dname, superviseId, sex) VALUES 
+('Mark', 'De', 'Genre', 40, 'Surgery', 'Cardiaology', 1, 'M'),
+('Sam', 'B', 'Rao', 29, 'Neuroanatomist', 'Neurology', 2, 'M'),
+('Zen', 'N', 'Maker', 31, 'Nephrologist', 'Nephrology', 1, 'M');
+set foreign_key_checks=1;
+
+#------GROUP BY, HAVING------
+
+SELECT 
+    Dname, COUNT(*)
+FROM
+    DOCTOR
+GROUP BY Dname;
+#+-------------+----------+
+#| Dname       | COUNT(*) |
+#+-------------+----------+
+#| Cardiaology |        1 |
+#| Nephrology  |        2 |
+#| Neurology   |        3 |
+#+-------------+----------+
+
+SELECT 
+    PLevel, COUNT(*)
+FROM
+    PATIENT
+GROUP BY PLevel
+HAVING PLevel < 4;
+#+--------+----------+
+#| PLevel | COUNT(*) |
+#+--------+----------+
+#|      2 |        2 |
+#|      3 |        3 |
+#+--------+----------+
+
+#------ORDER BY------
+SELECT 
+   Fname, Mname, Lname, age,PLevel
+FROM 
+   PATIENT
+ORDER BY 
+   PLevel ASC, 
+   Fname ASC;
+
+#+-------+-------+--------+------+--------+
+#| Fname | Mname | Lname  | age  | PLevel |
+#+-------+-------+--------+------+--------+
+#| Mer   | N     | Rage   |   35 |      2 |
+#| Ram   | B     | Rage   |   36 |      2 |
+#| LUX   | DE    | Rogue  |   28 |      3 |
+#| San   | T     | Ram    |   31 |      3 |
+#| Sonia | Mania | Pierre |   28 |      3 |
+#| Jack  | B     | MA     |   23 |      4 |
+#| King  | Jong  | Um     |   46 |      4 |
+#+-------+-------+--------+------+--------+
+

@@ -1,0 +1,114 @@
+#------SET OPERATION------
+
+#Union
+SELECT Fname, Mname, Lname 
+FROM PATIENT
+WHERE sex='F'
+UNION
+(SELECT Fname, Mname, Lname 
+FROM PATIENT
+WHERE sex='M');
+
+#Union all
+SELECT Fname, Mname, Lname 
+FROM PATIENT
+UNION ALL
+(SELECT Fname, Mname, Lname 
+FROM PATIENT
+WHERE sex='M');
+
+#mysql does not support MINUS however it can be simulated with LEFT JOIN
+#Left join
+SELECT D.Fname, D.Dname 
+FROM DOCTOR AS D 
+LEFT JOIN WORKS_ON AS W
+ON D.doctorId = W.doctorId
+WHERE W.doctorId IS NULL;
+#+-------+-------------+
+#| Fname | Dname       |
+#+-------+-------------+
+#| Mark  | Cardiaology |
+#| Sam   | Neurology   |
+#| Zen   | Nephrology  |
+#+-------+-------------+
+
+#------JOIN OPERATION------
+
+CREATE VIEW MALE_PATIENTS AS
+SELECT patientId,Fname, Mname, Lname, sex
+FROM PATIENT
+WHERE sex='M';
+
+#Left join
+SELECT D.Fname, D.Dname 
+FROM DOCTOR AS D 
+LEFT JOIN WORKS_ON AS W
+ON D.doctorId = W.doctorId; 
+#+-------+-------------+
+#| Fname | Dname       |
+#+-------+-------------+
+#| Mark  | Neurology   |
+#| Dark  | Neurology   |
+#| Clark | Nephrology  |
+#| Mark  | Cardiaology |
+#| Sam   | Neurology   |
+#| Zen   | Nephrology  |
+#+-------+-------------+
+
+
+#Inner Join
+SELECT D.Fname, D.Dname 
+FROM DOCTOR AS D    
+INNER JOIN WORKS_ON AS W
+ON D.doctorId = W.doctorId; 
+#+-------+------------+
+#| Fname | Dname      |
+#+-------+------------+
+#| Mark  | Neurology  |
+#| Dark  | Neurology  |
+#| Clark | Nephrology |
+#+-------+------------+
+
+
+#Right Join
+SELECT D.Fname, D.Dname 
+FROM DOCTOR AS D    
+RIGHT JOIN WORKS_ON AS W
+ON D.doctorId = W.doctorId; 
+#+-------+------------+
+#| Fname | Dname      |
+#+-------+------------+
+#| Mark  | Neurology  |
+#| Dark  | Neurology  |
+#| Clark | Nephrology |
+#+-------+------------+
+
+#------SUB QUERIES------
+SELECT 
+    Fname, Mname, Lname, sex,age
+FROM
+    PATIENT
+WHERE
+    age = (SELECT MAX(age) FROM PATIENT);
+#+-------+-------+-------+------+------+
+#| Fname | Mname | Lname | sex  | age  |
+#+-------+-------+-------+------+------+
+#| King  | Jong  | Um    | M    |   46 |
+#+-------+-------+-------+------+------+
+
+
+SELECT 
+    Fname, Mname, Lname, sex,age
+FROM
+    PATIENT
+WHERE
+    age > (SELECT AVG(age) FROM PATIENT);
+#+-------+-------+-------+------+------+
+#| Fname | Mname | Lname | sex  | age  |
+#+-------+-------+-------+------+------+
+#| Ram   | B     | Rage  | M    |   36 |
+#| Mer   | N     | Rage  | M    |   35 |
+#| King  | Jong  | Um    | M    |   46 |
+#+-------+-------+-------+------+------+
+
+

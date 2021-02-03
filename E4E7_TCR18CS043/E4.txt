@@ -1,0 +1,112 @@
+#NOTE : ALL THE CONSTRAINTS HAS BEEN PREVIOUSLY ADDED AS A PART OF EXPERIMENT 1 ! 
+#--------------------------------------------------------------------------------
+
+
+#------Creating WARD Table------
+CREATE TABLE WARD (
+ wId INTEGER,
+ DStage INTEGER NOT NULL CHECK(DStage>=1 and DStage<=5),
+ PRIMARY KEY (wId)
+);
+DESCRIBE WARD;
+
+#------Creating MEDICINES Table------
+CREATE TABLE MEDICINES (
+ medId INTEGER, 
+ quantity VARCHAR(20) NOT NULL,
+ description VARCHAR(100),
+ PRIMARY KEY (medId)
+);
+DESCRIBE MEDICINES;
+
+#------Creating DOCTOR Table------
+CREATE TABLE DOCTOR (
+ doctorId INTEGER, 
+ Fname VARCHAR(20) NOT NULL,
+ Mname VARCHAR(20),
+ Lname VARCHAR(20) NOT NULL,
+ age TINYINT UNSIGNED,
+ Experience VARCHAR(20) NOT NULL,
+ DName VARCHAR(20),
+ superviseId INTEGER,
+ sex CHAR(1),
+ PRIMARY KEY (doctorId),
+ FOREIGN KEY (superviseId) REFERENCES DOCTOR(doctorId)
+);
+DESCRIBE DOCTOR;
+
+#------Creating PATIENT Table------
+CREATE TABLE PATIENT (
+ patientId INTEGER, 
+ Fname VARCHAR(20) NOT NULL,
+ Mname VARCHAR(20),
+ Lname VARCHAR(20) NOT NULL,
+ age TINYINT UNSIGNED,
+ StreetAdd VARCHAR(20),
+ District VARCHAR(20) NOT NULL,
+ PIN INTEGER,
+ sex CHAR(1),
+ PLevel INTEGER NOT NULL CHECK(PLevel>=1 and PLevel<=10),
+ wId INTEGER,
+ PRIMARY KEY (patientId),
+ FOREIGN KEY (wId) REFERENCES WARD(wId) 
+);
+DESCRIBE PATIENT;
+
+#------Creating DEPARTMENT Table------
+CREATE TABLE DEPARTMENT (
+ Dno INTEGER,
+ Dname VARCHAR(20),
+ doctorId INTEGER, 
+ PRIMARY KEY (Dname),
+ FOREIGN KEY (doctorId) REFERENCES DOCTOR(doctorId) ON DELETE CASCADE
+);
+DESCRIBE DEPARTMENT;
+
+ALTER TABLE DOCTOR 
+ ADD FOREIGN KEY (DName) REFERENCES DEPARTMENT(DName);
+
+#------Creating WORKS_ON Table------                           # This is a Relationship based table
+CREATE TABLE WORKS_ON (
+ doctorId INTEGER,
+ wId INTEGER,
+ PRIMARY KEY (wId,doctorId),
+ FOREIGN KEY (doctorId) REFERENCES DOCTOR(doctorId),
+ FOREIGN KEY (wId) REFERENCES WARD(wId) 
+);
+DESCRIBE WORKS_ON;
+
+#------Creating CONSUMPTIONS Table------                       # This is a Relationship based table            
+CREATE TABLE CONSUMPTIONS (
+ medId INTEGER,
+ wId INTEGER,
+ PRIMARY KEY (wId,medId),
+ FOREIGN KEY (medId) REFERENCES MEDICINES(medId),
+ FOREIGN KEY (wId) REFERENCES WARD(wId) 
+);
+DESCRIBE CONSUMPTIONS;
+
+#------Creating DEP_LOCATION Table------
+CREATE TABLE DEP_LOCATION (
+ Dname VARCHAR(20),
+ Location VARCHAR(20),
+ PRIMARY KEY (Location),
+ FOREIGN KEY (DName) REFERENCES DEPARTMENT(DName)
+);
+DESCRIBE DEP_LOCATION;
+
+#------Creating GUARDIANS Table------
+CREATE TABLE GUARDIANS (
+ patientId INTEGER, 
+ name VARCHAR(20) NOT NULL,
+ age TINYINT UNSIGNED,
+ relationship VARCHAR(20),
+ sex CHAR(1),
+ PRIMARY KEY (name,patientId),
+ FOREIGN KEY (patientId) REFERENCES PATIENT(patientId) 
+);
+DESCRIBE GUARDIANS;
+
+
+
+

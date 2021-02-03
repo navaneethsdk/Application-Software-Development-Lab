@@ -1,0 +1,28 @@
+#VIEW TO DISPLAY ALL PATIENTS AND THEIR CURRENT STAGE
+
+CREATE VIEW PATIENT_STAGE
+AS 
+SELECT 
+    P.Fname,P.Mname,P.Lname,W.DStage
+FROM
+    PATIENT AS P
+INNER JOIN
+    WARD AS W USING (wId);
+
+SELECT * FROM PATIENT_STAGE;
+
+
+#VIEW to display Doctors who work in Dno 1
+
+CREATE VIEW DOCTOR_DEP
+AS 
+SELECT 
+    De.Dno, Fname, Mname, Lname, age, Experience, De.Dname
+FROM
+    DOCTOR AS D
+INNER JOIN
+    DEPARTMENT AS De USING (Dname);
+
+SELECT * FROM DOCTOR_DEP WHERE DNo = 1;
+
+    

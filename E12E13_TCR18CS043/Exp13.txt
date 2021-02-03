@@ -1,0 +1,46 @@
+#------Functions in mysql------
+
+SET GLOBAL log_bin_trust_function_creators = 1;
+DELIMITER //
+
+CREATE FUNCTION PatientLevel ( patientL INT )
+RETURNS varchar(20)
+
+BEGIN
+
+   DECLARE Cond varchar(20);
+
+   IF patientL <= 2 THEN
+      SET Cond = 'Critical';
+
+   ELSEIF patientL > 2 AND patientL <= 6 THEN
+      SET Cond = 'Moderate';
+
+   ELSE
+      SET Cond = 'Status Good';
+
+   END IF;
+
+   RETURN Cond;
+
+END; //
+
+DELIMITER ;
+SET GLOBAL log_bin_trust_function_creators = 0;
+
+SELECT Fname, Mname, Lname, PatientLevel(PLevel) FROM PATIENT;
+
+#------Procedures in mysql------
+
+DELIMITER $$    
+CREATE PROCEDURE AboveAgePatients(
+    IN Page INT,
+    OUT count INT
+)
+BEGIN
+SELECT count(patientId) INTO count FROM PATIENT WHERE age >= Page;
+END; $$
+DELIMITER ;
+
+CALL AboveAgePatients(30, @count);
+SELECT @count;

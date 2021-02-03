@@ -1,0 +1,142 @@
+#------Cursor------
+
+DELIMITER $$
+CREATE PROCEDURE createNameList (
+	INOUT nameList varchar(4000)
+)
+BEGIN
+DECLARE finished INTEGER DEFAULT 0;
+DECLARE name varchar(20) DEFAULT "";
+
+DECLARE curName 
+	CURSOR FOR 
+	SELECT Fname FROM PATIENT;
+
+DECLARE CONTINUE HANDLER 
+    FOR NOT FOUND SET finished = 1;
+
+OPEN curName;
+
+getName: LOOP
+	FETCH curName INTO name;
+	IF finished = 1 THEN 
+		LEAVE getName;
+	END IF;
+	-- build name list
+	SET nameList = CONCAT(name,";",nameList);
+END LOOP getName;
+CLOSE curName;
+
+END$$
+DELIMITER ;
+
+#--Testing cursor--
+SET @nameList = ""; 
+CALL createNameList(@nameList); 
+SELECT @nameList AS FIRST_NAME_PATIENTS;
+
+#----Triggers----
+
+#a table to track changes in Patient record like Plevel 
+CREATE TABLE PATIENT_DETAILS_CHANGE (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    patientId INT NOT NULL,
+    Fname VARCHAR(20) NOT NULL,
+    Lname VARCHAR(20) NOT NULL,
+    PLevel INTEGER NOT NULL CHECK(PLevel>=1 and PLevel<=10),
+    changedat DATETIME DEFAULT NULL,
+    action VARCHAR(50) DEFAULT NULL
+);
+#----Update Triggers----
+CREATE TRIGGER before_patient_update 
+    BEFORE UPDATE ON PATIENT
+    FOR EACH ROW 
+ INSERT INTO PATIENT_DETAILS_CHANGE
+ SET action = 'update',
+     patientId = OLD.patientId,
+     Fname = OLD.Fname,
+     Lname = OLD.Lname,
+     PLevel = OLD.PLevel,
+     changedat = NOW();
+
+SHOW TRIGGERS;
+
+UPDATE PATIENT 
+SET 
+    Plevel = 5
+WHERE
+    patientId = 3;
+
+SELECT * from PATIENT_DETAILS_CHANGE;
+#+----+-----------+-------+-------+--------+---------------------+--------+
+#| id | patientId | Fname | Lname | PLevel | changedat           | action |
+#+----+-----------+-------+-------+--------+---------------------+--------+
+#|  1 |         3 | Mer   | Rage  |      2 | 2020-10-26 13:24:52 | update |
+#+----+-----------+-------+-------+--------+---------------------+--------+
+
+#----INSERT TRIGGER------
+CREATE TABLE PATIENTS_PER_WARD(
+    wId INTEGER,
+    totalCapacity INT NOT NULL
+);
+
+DELIMITER $$
+
+CREATE TRIGGER before_PATIENT_insert
+BEFORE INSERT
+ON PATIENT FOR EACH ROW
+BEGIN
+    DECLARE rowcount INT;
+    
+    SELECT COUNT(*) 
+    INTO rowcount
+    FROM PATIENTS_PER_WARD
+    WHERE wId = new.wId;
+    
+    IF rowcount > 0 THEN
+        UPDATE PATIENTS_PER_WARD
+        SET totalCapacity = totalCapacity + 1
+        WHERE wId = new.wId;
+    ELSE
+        INSERT INTO PATIENTS_PER_WARD(wId,totalCapacity)
+        VALUES(new.wId,1);
+    END IF; 
+
+END $$
+DELIMITER ;
+
+set foreign_key_checks=0;
+INSERT INTO PATIENT (Fname, Mname, Lname, age,StreetAdd , District, PIN, sex, PLevel, wId) VALUES 
+('Kulkarnee', 'D', 'Singh', 35, 'Skagen 21', 'Stavanger', 4006, 'M', 2, 2),
+ ('Nav', 'D', 'Cage', 35, 'Skagen 21', 'Stavanger', 4006, 'M', 2, 4);
+set foreign_key_checks=1;
+
+Select * from PATIENTS_PER_WARD;
+
+#----Delete Trigger----
+DELIMITER $$
+
+CREATE TRIGGER after_PATIENT_delete
+AFTER DELETE
+ON PATIENT FOR EACH ROW
+BEGIN
+    DECLARE count INT;
+    
+    SELECT totalCapacity 
+    INTO count
+    FROM PATIENTS_PER_WARD
+    WHERE wId = old.wId;
+
+    IF count-1 > 0 THEN
+        UPDATE PATIENTS_PER_WARD
+        SET totalCapacity = totalCapacity - 1
+        WHERE wId = old.wId;
+    ELSE
+        DELETE FROM PATIENTS_PER_WARD
+        WHERE wId = old.wId;
+    END IF;
+
+END $$
+DELIMITER ;
+
+DELETE FROM PATIENT WHERE patientId = 12;
