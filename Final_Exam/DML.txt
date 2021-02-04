@@ -1,0 +1,60 @@
+#-----Populating tables with data--------
+
+set foreign_key_checks=0;
+INSERT INTO EMPLOYEE(Fname, Minit, Lname, BDate, Address, Salary, Super_ssn, Sex, Dno) VALUES 
+('Mark', 'B', 'Range', '1999-09-01', 'Calicut', 100000, 1, 'M', 1),
+('Ram', 'K', 'Seige', '1999-09-02', 'Thrissur', 200000, 2, 'M', 2),
+('Clark', 'N', 'Rager', '1999-09-03', 'Chicago', 300000, 1, 'M', 2);
+set foreign_key_checks=1;
+
+set foreign_key_checks=0;
+INSERT INTO DEPARTMENT(Dname, Mgr_ssn, Mgr_start_date) VALUES 
+('IT', 1, '1992-09-01'),
+('Sales', 3, '1991-09-01');
+set foreign_key_checks=1;
+
+INSERT INTO DEP_LOCATION(Dnumber,DLocation) VALUES
+(1,'Block 1'),
+(2,'Block 2');
+
+INSERT INTO PROJECT(Pname, Plocation, Dnum) VALUES
+('Smart City Planning', 'Kerala', 1),
+('Project Euler', 'Kerala', 1),
+('Project Trade', 'Bangalore', 2);
+
+INSERT INTO WORKS_ON (Essn , Pno, Hours ) VALUES
+(1,3,12),
+(2,2,6),
+(3,1,7);
+
+INSERT INTO DEPENDENT (Essn , Dependent_name , Bdate , Relationship , sex ) VALUES
+(2,'Alex','1999-09-02','cousin','M' ),
+(3,'Clara','1999-09-02','cousin','F' )
+;
+
+
+#------Questions------- (Answers in the screenshot PDF)
+
+# Insert an employee tuple in EMPLOYEE table with Ssn as NULL
+INSERT INTO EMPLOYEE(Ssn, Fname, Minit, Lname, BDate, Address, Salary, Super_ssn, Sex, Dno) VALUES 
+(NULL, 'Mark', 'B', 'Range', '1999-09-01', 'Calicut', 100000, 1, 'M', 1);
+
+# Insert an employee tuple in EMPLOYEE table with an existing Ssn ( already an employee is there with the same Ssn )
+INSERT INTO EMPLOYEE(Ssn, Fname, Minit, Lname, BDate, Address, Salary, Super_ssn, Sex, Dno) VALUES 
+(1, 'Mark', 'B', 'Range', '1999-09-01', 'Calicut', 100000, 1, 'M', 1);
+
+# Insert an employee tuple in EMPLOYEE table with a non existing Dno
+INSERT INTO EMPLOYEE(Fname, Minit, Lname, BDate, Address, Salary, Super_ssn, Sex, Dno) VALUES 
+('Sara', 'v', 'John', '1999-09-05', 'Calicut', 100000, 1, 'F', 4);
+
+# Delete the WORKS_ON tuple with the given Essn and Pno
+DELETE FROM WORKS_ON WHERE Essn = 3 AND Pno = 1;
+
+# Delete an EMPLOYEE tuple with a given Ssn
+DELETE FROM EMPLOYEE WHERE Ssn = 4;
+
+# Update the salary of an employee to some new salary, given the Ssn
+UPDATE EMPLOYEE SET Salary = 1500000 WHERE Ssn = 1;
+
+# Update Dno of an employee to some non-existing department number
+UPDATE EMPLOYEE SET Dno = 5 WHERE Ssn = 1;
